@@ -1,21 +1,23 @@
 console.log('%c HI', 'color: firebrick')
+let breeds
 
 document.addEventListener('DOMContentLoaded', function () {
   getImages()
   getBreeds()
   const letterDropDown = document.getElementById("breed-dropdown")
+
   listenAssign(letterDropDown)
   })
 
   function listenAssign(letterDropDown) {
-  letterDropDown.addEventListener("change", (event) => {
-    for (let i = 0; i < breeds.length; i++) {
-      let currentBreed = breeds[i]
-      let currentLetter = currentBreed.charAt(0)
-    filterSelector(event, currentBreed, currentLetter)
-    }
-  })
-}
+    letterDropDown.addEventListener("change", (event) => {
+      let letterSelection = event.target.value
+      if (letterSelection !== "") {
+      let filteredBreeds = breeds.filter(breed => letterSelection === breed[0])
+      loadBreeds(filteredBreeds)
+      } else loadBreeds(breeds)
+    })
+  }
 
 function getImages() { //declare func to grab images
   const imgUrl = "https://dog.ceo/api/breeds/image/random/4"
@@ -28,11 +30,11 @@ function getImages() { //declare func to grab images
   })
 }
 
-function loadImage(imageLink) { //take in json file of images
+function loadImage(imageLink) {
   let imageContainer = document.getElementById("dog-image-container") //create container
-  let imgElement = document.createElement("img") // create img elements
-  imgElement.src = imageLink //define the source for the image link
-  imageContainer.appendChild(imgElement) //append the image to the end of the list
+  let imgElement = document.createElement("img")
+  imgElement.src = imageLink
+  imageContainer.appendChild(imgElement)
 }
 
 
@@ -43,15 +45,13 @@ function getBreeds() { //define get breeds func
   .then(result => { //
     breeds = Object.keys(result.message)
     loadBreeds(breeds)
-    return breeds
   })
 }
 
-
-
 function loadBreeds(breeds) {
+  let ulTag = document.querySelector('#dog-breeds')
+  ulTag.innerText = ""
   breeds.forEach(breed => {
-    let ulTag = document.querySelector('#dog-breeds')
     let liTag = document.createElement('li')
     ulTag.appendChild(liTag)
     liTag.innerText = breed
@@ -62,39 +62,3 @@ function loadBreeds(breeds) {
 function changeTextColor(event) {
   event.target.style.color = 'red';
 }
-
-
-
-function filterSelector(event, currentBreed, currentLetter) {
-    let letterSelection = event.target[0].innerText
-    if (letterSelection === currentLetter) {
-      updateBreedList(currentBreed)
-  }
-}
-
-function updateBreedList(currentBreed) {
-  let ul = document.querySelector('#dog-breeds');
-  removeChildren(ul);
-
-  let newLiTag = document.createElement('li')
-    ul.appendChild(newLiTag)
-    newLiTag.innerText = currentBreed
-  // loadNewDogs(currentBreed)
-}
-
-function removeChildren(element) {
-  let child = element.lastElementChild;
-  while (child) {
-    element.removeChild(child);
-    child = element.lastElementChild;
-  }
-}
-
-// function loadNewDogs(currentBreed) {
-//   while (currentBreed) {
-//     let newUlTag = document.querySelector('#dog-breeds')
-//     let newLiTag = document.createElement('li')
-//       newUlTag.appendChild(newLiTag)
-//       newLiTag.innerText = currentBreed
-//     }
-//   }
